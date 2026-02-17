@@ -1,0 +1,120 @@
+html, body {
+    background-color: grey;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+body{
+    background-image: url('/static/img/bg.png');
+    background-size: cover;
+}
+
+.circle-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    top: 22vh;
+    left: 21vh;
+    width: 50vh;
+    height: 50vh;
+    border-radius: 6vh;
+}
+
+.mt-5{
+
+}
+
+.mt-3{
+
+left: 142vh;
+}
+.circle {
+    width: 10vh;
+    height: 10vh;
+    border-radius: 50%;
+    background-color: gray; /* Cor padrão */
+    transition: background-color 0.5s;
+    border: 2px solid #000;
+}
+
+#cruz_circle1{
+    position: fixed;
+    left: 41vh;
+    top: 30vh;
+    align-content: center;
+    text-align: center;
+    font-size: -webkit-xxx-large;
+}
+
+
+#cruz_circle2{
+    position: fixed;
+    left: 54vh;
+    top: 42vh;
+    align-content: center;
+    text-align: center;
+    font-size: -webkit-xxx-large;
+}
+
+
+#cruz_circle3{
+    position: fixed;
+    left: 41vh;
+    top: 56vh;
+    align-content: center;
+    text-align: center;
+    font-size: -webkit-xxx-large;
+}
+
+
+#cruz_circle4{
+    position: fixed;
+    left: 27vh;
+    top: 42vh;
+    align-content: center;
+    text-align: center;
+    font-size: -webkit-xxx-large;
+}
+
+#play_circle1{
+    position: fixed;
+    left: 151vh;
+    top: 31vh;
+    align-content: center;
+    text-align: center;
+    font-size: -webkit-xxx-large;
+}
+
+
+#play_circle2{
+    position: fixed;
+    left: 151vh;
+    top: 53vh;
+    align-content: center;
+    text-align: center;
+    font-size: -webkit-xxx-large;
+}
+
+
+#play_circle3{
+    position: fixed;
+    left: 170vh;
+    top: 42vh;
+    align-content: center;
+    text-align: center;
+    font-size: -webkit-xxx-large;
+}
+
+/* Classe para borda verde */
+
+.green-border {
+    outline: 5px solid green
+}
+
+.red-border {
+    outline: 5px solid red
+}

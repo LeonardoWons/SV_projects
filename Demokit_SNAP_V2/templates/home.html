@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Factory</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/home.css') }}">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='images/favicon.ico') }}">
+    <script src="{{ url_for('static', filename='socket.io.min.js') }}"></script>
+
+</head>
+<body>
+
+    <div id="titulo">
+        <div id="texto_blabla">
+            <h1 style="margin: 0;">Dashboard virtual: Monitoramento de dados</h1>
+            <div id='dxm' style="padding: 1vh; color: green;"> Analizando ... </div>
+        </div>
+    </div>
+
+    <button class="button_p" id="botao-principal" onclick="mostrarPainel()">
+        Abrir Painel
+    </button>
+
+    <div id="painel">
+        <div class="coluna">
+            <form action="{{url_for('cnc')}}">
+                <button class="button_p" id="cnc" type="submit" >CNC machine</button>
+            </form>
+
+            <a href="/alertas/cnc"><button class="button_p" id="cnc_alert">Alarmes(CNC)</button></a>
+
+        </div>
+
+        <div class="coluna">
+            <form action="{{url_for('estufa')}}">
+                <button class="button_p" id="estufa" type="submit">Estufa</button>
+            </form>
+            <a href="/alertas/estufa"><button class="button_p" id="estufa_alert">Alarmes(Estufa)</button></a>
+        </div>
+
+        <div class="coluna">
+            <form action="{{url_for('agua')}}">
+                <button class="button_p" id="water" type="submit">Tank de agua</button>
+            </form>
+            <a href="/alertas/tanque"><button class="button_p" id="agua_alert">Alarmes(Tanque)</button></a>
+        </div>
+    </div>
+
+    <script>
+        function mostrarPainel() {
+            const painel = document.getElementById("painel");
+            const botao = document.getElementById("botao-principal");
+
+            const estaAtivo = painel.classList.contains("ativo");
+
+            if (estaAtivo) {
+                painel.classList.remove("ativo");
+                botao.innerText = "Mostrar Painel";
+            } else {
+                painel.classList.add("ativo");
+                botao.innerText = "Esconder Painel";
+            }
+        }
+        
+
+        document.addEventListener("DOMContentLoaded", () => {
+            var socket = io.connect('http://' + document.domain + ':' + location.port + '/');
+            socket.on('sensor_data', function(data) {
+                 const texto = document.getElementById('dxm');
+                 texto.textContent = data.dxm;
+                 if (data.dxm == 'DXM está offline :('){
+                    texto.style.setProperty('color', 'red');
+                 }
+            });
+        });
+
+    </script>
+
+</body>
+</html>

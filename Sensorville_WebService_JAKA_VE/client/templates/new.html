@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Indicadores de Status</title>
+    <!-- Seu CSS personalizado -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/new_style.css') }}">
+    <!-- Ícone da página (opcional) -->
+    <link rel="icon" href="{{ url_for('static', filename='sv.ico') }}" type="image/x-icon">
+</head>
+<body>
+    <div class="container">
+
+        <div id="cruz" class="circle-container mt-5">
+            <div class="circle" id="cruz_circle1"> </div>
+            <div class="circle" id="cruz_circle2"> </div>
+            <div class="circle" id="cruz_circle3"> </div>
+            <div class="circle" id="cruz_circle4"> </div>
+        </div>
+
+        <div id="play" class="circle-container mt-3">
+            <div class="circle" id="play_circle1"> </div>
+            <div class="circle" id="play_circle2"> </div>
+            <div class="circle" id="play_circle3"> </div>
+        </div>
+    </div>
+
+    <!-- jQuery para facilitar as requisições AJAX -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Seu JavaScript personalizado -->
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

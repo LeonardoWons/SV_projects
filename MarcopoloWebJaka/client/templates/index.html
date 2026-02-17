@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Linha de Parafusamento</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+</head>
+<body>
+    <header class="header">
+        <img src="{{ url_for('static', filename='img/marco_preto.png') }}" alt="Logo Marcopolo" class="logo">
+        <h1 class="titulo">Linha de Parafusamento</h1>
+        <img src="{{ url_for('static', filename='img/sv_preto.png') }}" alt="Logo Sensorville" class="logo">
+    </header>
+
+    <div class="assembly-bench">
+        <div class="position" id="position-left">
+            <h2>Posição Esquerda</h2>
+            <form action="/submit" method="POST">
+                <div class="select_option">
+                    <label for="imageSelectLeft">Selecione uma opção:</label>
+                    <select id="imageSelectLeft" name="selectedOption" onchange="showImage('left')">
+                        {% for name, filename in left_photos %}
+                            <option value="{{ name }}" data-image="{{ url_for('static', filename='img/' + filename) }}" {% if left_option == name %}selected{% endif %}>{{ name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <input type="hidden" name="side" value="left">
+                <input type="hidden" name="left_option" value="{{ left_option }}">
+                <input type="hidden" name="right_option" value="{{ right_option }}">
+                <input type="hidden" name="left_msg" value="{{ left_msg }}">
+                <input type="hidden" name="right_msg" value="{{ right_msg }}">
+                <div class="image-container">
+                    <img id="selectedImageLeft" src="{{ url_for('static', filename='img/' + left_photos[0][1]) }}" alt="Imagem selecionada">
+                    <button type="submit" class="button1">Confirmar</button>
+                </div>
+            </form>
+            <p id="status-esquerda">{{ left_msg }}</p>
+        </div>
+
+        <div class="position" id="position-right">
+            <h2>Posição Direita</h2>
+            <form action="/submit" method="POST">
+                <div class="select_option">
+                    <label for="imageSelectRight">Selecione uma opção:</label>
+                    <select id="imageSelectRight" name="selectedOption" onchange="showImage('right')">
+                        {% for name, filename in right_photos %}
+                            <option value="{{ name }}" data-image="{{ url_for('static', filename='img/' + filename) }}" {% if right_option == name %}selected{% endif %}>{{ name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <input type="hidden" name="side" value="right">
+                <input type="hidden" name="left_option" value="{{ left_option }}">
+                <input type="hidden" name="right_option" value="{{ right_option }}">
+                <input type="hidden" name="left_msg" value="{{ left_msg }}">
+                <input type="hidden" name="right_msg" value="{{ right_msg }}">
+                <div class="image-container">
+                    <img id="selectedImageRight" src="{{ url_for('static', filename='img/' + right_photos[0][1]) }}" alt="Imagem selecionada">
+                    <button type="submit" class="button1">Confirmar</button>
+                </div>
+            </form>
+            <p id="status-direita">{{ right_msg }}</p>
+        </div>
+    </div>
+
+    <div class="status_page">
+        <button class="button1" role="button"> Status das peças e JAKA</button>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

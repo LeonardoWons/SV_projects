@@ -1,0 +1,217 @@
+html{
+
+    min-height: 100%;
+}
+
+body{
+    margin: 3vh 5vh 0;
+}
+
+#line {
+    background: white linear-gradient(rgba(255, 214, 0, 0.3019607843), #ffd600);
+    height: 5.5vh;
+    overflow: hidden;
+    border-radius: 1.5vh;
+}
+
+#logo{
+    position: absolute;
+    z-index: 1;
+    width: 30vh;
+    right: 5vh;
+}
+
+#fact_buttons {
+    width: 100%;
+    height: auto;
+    text-align: center;
+}
+
+#factory {
+    width: 127.4vh;
+}
+
+.area_button{
+    position: absolute;
+    background: linear-gradient(to bottom right, #ffd84f, #fbc400);
+    border-radius: 12px;
+    border-width: 2px;
+    color: #000000;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 2.5;
+    outline: transparent;
+    padding: 0 1rem;
+    text-align: center;
+    text-decoration: none;
+    transition: box-shadow .2s ease-in-out;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+    white-space: nowrap;
+}
+
+.box{
+    background: #ffffff00;
+    border: 0;
+    border-radius: 3vh;
+    transition: box-shadow 0.5s;
+}
+
+.boxshadow_room{
+    box-shadow: inset 20px 0px 2rem 0px #fbc400, inset -1px -5px 2rem 0px #fbc400;
+}
+
+.boxshadow{
+    box-shadow: inset 0 0 1.5rem 0px #fbc400;
+}
+form{
+    width:fit-content;
+}
+
+#content{
+    margin: 0 5vh;
+    min-height: 89vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+}
+
+#header{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.back_button{
+    background: linear-gradient(to bottom right, #ffd84f, #fbc400);
+    border-radius: 12px;
+    border-width: 2px;
+    color: #000000;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 2.5;
+    outline: transparent;
+    padding: 0 1rem;
+    text-align: center;
+    text-decoration: none;
+    transition: box-shadow .2s ease-in-out;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+    white-space: nowrap;
+}
+
+#div_logo_title{
+    width: fit-content;
+    display: flex;
+    flex-direction: column;
+}
+
+#logo_title{
+    width: 30vh;
+}
+
+#title{
+    text-align: center;
+    margin: 1vh 0;
+}
+
+#dowload_button{
+    text-align: -webkit-center
+}
+
+#cnc_barras{
+    display: flex;
+    min-width: 100%;
+    height: fit-content;
+    justify-content: space-between;
+    align-items: center;
+}
+#cnc{
+    width: 60vh;
+}
+
+.container {
+    display: flex;
+    width: 116vh;
+    justify-content: space-around;
+    align-items: flex-end;
+}
+
+.indicator {
+    width: 11vh;
+    position: relative;
+    text-align: -webkit-center;
+}
+
+.label {
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+
+.bar-container {
+    align-content: center;
+    height: 40vh;
+    width: 2vh;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    margin: 0 0;
+    background: linear-gradient(to top, green, yellow, red);
+}
+
+.bar_scale{
+
+position: relative;
+
+height: 90%;
+}
+
+.bar {
+    position: absolute;
+    width: 100%;
+    height: 1%;
+    background: black;
+    transition: bottom 0.5s;
+    bottom: 0%;
+}
+
+.scale {
+    position: absolute;
+    height: 105%;
+    font-size: small;
+    top: -2.5%;
+    left: 2.5vh;
+    display: flex;
+    flex-direction: column;
+    text-align: right;
+    box-sizing: border-box;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.value {
+    margin-top: 10px;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.chart-container {
+    width: 80%;
+    margin: 20px auto;
+}
+
+#status-circle {
+    position: absolute;
+    top: 70vh;
+    left: 31.3vh;
+    width: 5vh;
+    height: 5vh;
+    border: 1vh solid;
+    border-radius: 50%;
+    background-color: red;
+}

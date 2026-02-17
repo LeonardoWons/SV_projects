@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Created with Liquid XML Objects - Registered to 'Sensonix ' - https://www.liquid-technologies.com/xml-objects -->
+<configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <file_info>
+    <info device="DXMR1108K" filename="110_config_xml.xml" guid="f2afa520-49a5-43c8-8107-090084623843" os="Win32NT" osversion="Microsoft Windows NT 6.2.9200.0" software="DXMConfigurationSoftware v4" solution="None" timestamp="28/02/2025 09:26:22" version="4.19.3.0" />
+  </file_info>
+  <local_regs />
+  <cascade />
+  <constant />
+  <calculate />
+  <thresholds />
+  <trend />
+  <trackers>
+    <rule flags="0" mode="1" name="tracker k50 1" reg="1001" res="2" />
+  </trackers>
+  <rtu_read />
+  <rtu_write />
+  <sched_holidays />
+  <sched_commands />
+  <sched_events />
+  <astro_clock>
+    <set dst="0" lat="0" lon="0" zone="0" />
+  </astro_clock>
+  <gps>
+    <unit addr="0" enabled="0" flags="0" lograte="00:00:00" poll="00:00:00" />
+  </gps>
+  <master_mode>
+    <mode opt="1" state="0" />
+  </master_mode>
+  <rtu_device>
+    <dev baud="19200" commtype="485" data="8" parity="0" rate="50" stop="1" thisUnit="0" timeout="5" />
+  </rtu_device>
+  <rtu_server>
+    <dev baud="19200" commtype="485" data="8" parity="0" stop="1" timeout="0" />
+  </rtu_server>
+  <scripts>
+    <script baud="19200" data="8" delay="20000" enabled="0" parity="0" path="" stop="1" />
+  </scripts>
+  <timekeepers>
+    <timekeeper address="0.0.0.0" enabled="1" interval="0" name="external" priority="3" />
+    <timekeeper address="0.0.0.0" enabled="0" interval="0" name="internal" priority="2" />
+    <timekeeper address="0.0.0.0" enabled="0" interval="0" name="network" priority="1" />
+  </timekeepers>
+  <system_types />
+  <log_files>
+    <fileinfo>
+      <message />
+      <log dir="1" email="" enab="0" end="00:00:00" full="0" name="EventLog.txt" new="0" rate="00:00:00" reg="0" size="102400" subject="" tod="1" />
+    </fileinfo>
+    <fileinfo>
+      <message />
+      <log dir="1" email="" enab="0" end="00:00:00" full="0" name="LogFile1.txt" new="0" rate="00:00:00" reg="0" size="102400" subject="" tod="5" />
+    </fileinfo>
+    <fileinfo>
+      <message />
+      <log dir="1" email="" enab="0" end="00:00:00" full="0" name="LogFile2.txt" new="0" rate="00:00:00" reg="0" size="102400" subject="" tod="5" />
+    </fileinfo>
+    <fileinfo>
+      <message />
+      <log dir="1" email="" enab="0" end="00:00:00" full="0" name="LogFile3.txt" new="0" rate="00:00:00" reg="0" size="102400" subject="" tod="5" />
+    </fileinfo>
+    <fileinfo>
+      <message />
+      <log dir="1" email="" enab="1" end="00:00:00" full="1" name="HttpLog.txt" new="0" rate="00:00:00" reg="0" size="0" subject="" tod="1" />
+    </fileinfo>
+  </log_files>
+  <device_sync>
+    <device sync_rollover="100000000" />
+  </device_sync>
+  <email_server>
+    <server auth="" domain="" pass="" pop3="" pop3domain="" pop3user="" port="25" pwd="" smtp="" sysrep="0" useauth="0" user="" />
+  </email_server>
+  <server_params>
+    <server apn="IP" apnpass="vzwinternet" cellenab="8" cellfw="0.0.0.0" cellfwmask="255.255.255.0" defaddr="192.168.0.1" defgtwy="0.0.0.0" defmask="255.255.255.0" dhcp="0" sms="0" />
+    <cell_info cell_modelname="SXI-CATM1VZW-001" />
+    <maint cexch="0" ckeep="0" csflags="0" csqbak="0" csqret="5" csrvre="0" csrvwd="0" linkdel="60000" linkmax="120000" linkret="2" />
+    <eth flags="0" />
+    <apn idx="1" name="" type="IPV4V6" />
+    <apn idx="2" name="vzwadmin" type="IPV4V6" />
+    <apn idx="3" name="vzwinternet" type="IPV4V6" />
+    <apn idx="4" name="vzwapp" type="IPV4V6" />
+    <apn idx="5" name="vzw800" type="IPV4V6" />
+    <apn idx="6" name="vzwclass6" type="IPV4V6" />
+    <cx en="1" />
+    <netif flags="0" gw4="0.0.0.0" ip4="0.0.0.0" mode="1" sn4="0.0.0.0" />
+  </server_params>
+  <http_push>
+    <dns address="0.0.0.0" />
+    <dns address="0.0.0.0" />
+    <push debug="0" enabled="1" flags="4104" host="push.bannercds.com" id="00000000-0000-0000-0000-000000000000" interval="00:00:00" page="/push.aspx" port="80" vendor="0" />
+  </http_push>
+  <fwall />
+  <profinet>
+    <io en="0" flags="0" />
+  </profinet>
+  <iot>
+    <mqtt debug="0" en="0" flags="5" host="" id=" " ping="50000" port="8883" throttle="0" vendor="7" />
+  </iot>
+  <io_link>
+    <bus cycle="0" device="0" input1="0" input2="0" iq="0" mode="2" port="1" validate="0" vendor="0" />
+    <bus cycle="0" device="0" input1="0" input2="0" iq="0" mode="2" port="2" validate="0" vendor="0" />
+    <bus cycle="0" device="0" input1="0" input2="0" iq="0" mode="2" port="3" validate="0" vendor="0" />
+    <bus cycle="0" device="0" input1="0" input2="0" iq="0" mode="2" port="4" validate="0" vendor="0" />
+    <bus cycle="0" device="0" input1="0" input2="0" iq="0" mode="2" port="5" validate="0" vendor="0" />
+    <bus cycle="0" device="0" input1="0" input2="0" iq="0" mode="2" port="6" validate="0" vendor="0" />
+    <bus cycle="0" device="0" input1="0" input2="0" iq="0" mode="2" port="7" validate="0" vendor="0" />
+    <bus cycle="0" device="0" input1="0" input2="0" iq="0" mode="2" port="8" validate="0" vendor="0" />
+  </io_link>
+</configuration>

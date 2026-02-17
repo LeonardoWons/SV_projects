@@ -1,0 +1,111 @@
+:root {
+  --primary-gradient: linear-gradient(to bottom right, #ffd84f, #fbc400);
+  --secondary-gradient: white linear-gradient(rgba(255, 214, 0, 0.3), #ffd600);
+  --spacing-unit: 1rem;
+  --border-radius: 0.75rem;
+  --box-shadow: 0 0 1.5rem 0px #fbc400;
+  --box-shadow-room: inset 20px 0px 2rem 0px #fbc400, inset -1px -5px 2rem 0px #fbc400;
+}
+
+        body {
+            margin: 0;
+            height: 100vh;
+            background-image: url("/static/images/factory.png");
+            background-size: 100% 100%; /* estica mesmo deformando */
+            background-repeat: no-repeat;
+        }
+
+        /* Título no canto superior direito */
+        #titulo {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+        }
+        #texto_blabla{
+            border: 4px solid #ffd600;
+            border-radius: min(2vh, 20px);
+            padding: 1rem;
+            text-align: center;
+            max-width: 440px;
+            background: white;
+            box-shadow: var(--box-shadow);
+            margin: 0;
+            font-size: 1.5vh;
+            font-family: monospace;
+            font-weight: bolder;
+        }
+
+        /* Botão centralizado no eixo X */
+        #botao-principal {
+            position: absolute;
+            bottom: 5vh;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        /* Caixa que aparece ao clicar */
+        #painel {
+            position: absolute;
+            display: flex;
+            top: 50%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40vw;
+            height: 35vh;
+            background-color: gray;
+            border: 0.4vw solid black;
+            flex-direction: row;
+            flex-wrap: nowrap;
+            align-content: center;
+            justify-content: space-around;
+            border-radius: 2vh;
+            align-items: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.4s ease;
+        }
+        /* Estado visível */
+        #painel.ativo {
+            opacity: 1;
+            visibility: visible;
+            transition: opacity 0.4s ease;
+        }
+
+        /* Estrutura 3 colunas */
+        .colunas {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .coluna {
+            display: flex;
+            height: 80%;
+            flex-direction: column;
+            gap: 10px;
+            width: 25%;
+            align-items: center;
+            justify-content: space-evenly;
+        }
+
+        .button_p {
+            background: var(--primary-gradient);
+            border-radius: var(--border-radius);
+            border-width: 0.5vh;
+            color: #000000;
+            cursor: pointer;
+            display: inline-block;
+            font-size: 2.2vh;
+            line-height: 2.5;
+            outline: transparent;
+            padding: 0 2vh;
+            text-align: center;
+            text-decoration: none;
+            transition: box-shadow 0.2s ease-in-out;
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: manipulation;
+            white-space: nowrap;
+            font-family: monospace;
+            font-weight: bolder;
+        }
+    

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Controle do nivel de agua</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/agua.css') }}">
+    <script src="{{ url_for('static', filename='socket.io.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='chart.js') }}"></script>
+    <script src="{{ url_for('static', filename='chartjs-plugin-datalabels@2.0.0') }}"></script>
+    <script src="{{ url_for('static', filename='moment.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='chartjs-adapter-moment@1.0.0') }}"></script>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+</head>
+<body>
+    <div id="line"></div>
+    <div id="content">
+
+        <div id="header">
+            <form action="{{url_for('home')}}">
+                <button class="back_button"> <b><</b> Voltar</button>
+            </form>
+            <div id="div_logo_title">
+                <img id="logo_title" src="{{ url_for('static',filename='images/logo.jpg') }}">
+                <h1 id="title">Medição de nível</h1>
+            </div>
+
+        </div>
+
+        <div id="div_q4">
+            <h1 id="valor_q4">Valor: <span id="sensor1"></span></h1>
+            <div id="q4x_lazer">
+                <img id="q4x" src="{{ url_for('static',filename='images/q4x.png') }}">
+                <img id="lazer" src="{{ url_for('static',filename='images/lazer.png') }}">
+            </div>
+        </div>
+
+        <div id="graph_tank">
+            <div id="graph">
+                <canvas id="myChart"></canvas>
+            </div>
+
+            <div id="tank-container">
+                <div id="water-level"></div>
+            </div>
+        </div>
+
+        <div id="dowload_button">
+            <form action="{{ url_for('download') }}" method="post">
+            <button value="agua" name="button" class="back_button" type="submit">Download</button>
+        </form>
+        </div>
+
+    </div>
+    <svg width="0" height="0">
+        <defs>
+            <mask id="wave-mask" maskUnits="userSpaceOnUse" x="0" y="0" width="100" height="100">
+                <path d="M0 30
+                         C 20 10, 40 50, 60 30
+                         C 80 10, 100 50, 120 30
+                         C 140 10, 160 50, 180 30
+                         V100 H0 Z"
+                      fill="white"/>
+            </mask>
+        </defs>
+    </svg>
+
+    <script src="{{ url_for('static',filename='js/agua.js') }}"></script>
+</body>
+</html>

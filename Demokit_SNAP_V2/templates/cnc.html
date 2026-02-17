@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+    <head>
+    <meta charset="UTF-8">
+    <title>Monitoramento</title>
+
+    <script src="{{ url_for('static', filename='socket.io.min.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/estufa.css') }}">
+    </head>
+
+    <body>
+
+        <div id="header">
+            Monitoramento de Dados - CNC
+        </div>
+
+        <div id="main">
+
+            <!-- COLUNA 1 -->
+            <div id="sidebar">
+
+                <form action="{{url_for('home')}}">
+                    <button class="back_button"> <b><</b> Voltar</button>
+                </form>
+
+                <select id="variavelSelect">
+                    <option value="qm30_v_mm_x">Vibração X (mm/s)</option>
+                    <option value="qm30_hf_a_x">Frequência X</option>
+                    <option value="qm30_v_mm_y">Vibração Y (mm/s)</option>
+                    <option value="qm30_hf_a_y">Frequência Y</option>
+                    <option value="qm30_v_mm_z">Vibração Z (mm/s)</option>
+                    <option value="qm30_hf_a_z">Frequência Z</option>
+                    <option value="value_qm30_temp">Temperatura</option>
+                    <option value="value_b22_status">Disponibilidade</option>
+                    <option value="value_b22_peca">Quantidade de Peça</option>
+                    <option value="s15cct_value">Consumo</option>
+                </select>
+
+                <div style="width: 80%;">
+                    <div class="text-box">Vibração X</div>
+                    <div class="valor-box" id="valor1">--</div>
+                </div>
+
+                <div style="width: 80%;">
+                    <div class="text-box">Frequência X</div>
+                    <div class="valor-box" id="valor2">--</div>
+                </div>
+
+                 <div style="width: 80%;">
+                    <div class="text-box">Vibração Y</div>
+                    <div class="valor-box" id="valor3">--</div>
+                 </div>
+
+                <div style="width: 80%;">
+                    <div class="text-box">Frequência Y</div>
+                    <div class="valor-box" id="valor4">--</div>
+                </div>
+
+                <div style="width: 80%;">
+                    <div class="text-box">Vibração Z</div>
+                    <div class="valor-box" id="valor5">--</div>
+                </div>
+                <div style="width: 80%;">
+                    <div class="text-box">Frequência Z</div>
+                    <div class="valor-box" id="valor6">--</div>
+                </div>
+                <div style="width: 80%;">
+                    <div class="text-box">Temperatura</div>
+                    <div class="valor-box" id="valor7">--</div>
+                </div>
+                <div style="width: 80%;">
+                    <div class="text-box">Disponibilidade</div>
+                    <div class="valor-box" id="valor8">--</div>
+                </div>
+                <div style="width: 80%;">
+                    <div class="text-box">Quantidade de Peças</div>
+                    <div class="valor-box" id="valor9">--</div>
+                </div>
+                <div style="width: 80%;">
+                    <div class="text-box">Consumo</div>
+                    <div class="valor-box" id="valor10">--</div>
+                </div>
+
+                <div id="dowload_button">
+                    <form action="{{ url_for('download') }}" method="post">
+                        <button value="cnc" name="button" class="back_button" type="submit">Download</button>
+                    </form>
+                </div>
+
+            </div>
+
+            <!-- COLUNA 2 -->
+            <div id="grafico-container">
+                <div id="grafico"></div>
+            </div>
+
+        </div>
+
+        <script src="{{ url_for('static',filename='js/cnc.js') }}"></script>
+
+    </body>
+</html>

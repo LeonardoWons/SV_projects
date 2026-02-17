@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebSocket Tuggers</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        #messages {
+            margin-top: 20px;
+            border: 1px solid #ccc;
+            padding: 10px;
+            height: 200px;
+            overflow-y: scroll;
+        }
+    </style>
+</head>
+<body>
+    <h1>Conexão WebSocket com Rebocador</h1>
+    <button id="connectButton">Conectar</button>
+    <div id="messages"></div>
+
+    <script>
+        // const url = "ws://localhost:8000/ws/tuggers_on_time";
+        const url = "wss://jduberbackend-dev.jdnet.deere.com/ws/tuggers_on_time";
+        let websocket;
+
+        document.getElementById("connectButton").onclick = function() {
+            websocket = new WebSocket(url);
+
+            websocket.onopen = function() {
+                console.log("Conectado ao WebSocket!");
+                appendMessage("Conectado ao WebSocket!");
+                document.getElementById("sendMessageButton").disabled = false;
+            };
+
+            websocket.onmessage = function(event) {
+                if (event.data === "pong") {
+                    console.log("Pong recebido, conexão mantida.");
+                    return;
+                }
+
+                const data = JSON.parse(event.data);
+                console.log(data);
+                appendMessage(`Recebido: Tugger ID: ${data.tugger_id}, Latitude: ${data.latitude}, Longitude: ${data.longitude}`);
+            };
+
+            websocket.onclose = function(event) {
+                console.log("Conexão fechada: ", event.code);
+                appendMessage("Conexão fechada: " + event.code);
+                document.getElementById("sendMessageButton").disabled = true;
+            };
+
+            websocket.onerror = function(error) {
+                console.error("Erro no WebSocket: ", error);
+                appendMessage("Erro no WebSocket: " + error.message);
+            };
+
+            setInterval(() => {
+                if (websocket.readyState === WebSocket.OPEN) {
+                    websocket.send("ping");
+                    console.log("Ping enviado.");
+                }
+            }, 30000);
+        };
+
+        function appendMessage(message) {
+            const messagesDiv = document.getElementById("messages");
+            messagesDiv.innerHTML += "<div>" + message + "</div>";
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+    </script>
+</body>
+</html>

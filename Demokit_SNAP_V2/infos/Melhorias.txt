@@ -1,0 +1,3 @@
+
+2- Fazer o código se tornar um executável (tentativa atual com PyInstaller)
+3- Melhorar os gráficos na pagina CNC (a pedido do Marcos Braz)

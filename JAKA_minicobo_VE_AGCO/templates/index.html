@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+    <head>
+        <meta charset="UTF-8">
+        <title>Página com Imagens</title>
+        <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    </head>
+    <body>
+        <!-- Imagem de fundo como <img> -->
+        <img class="background" src="{{ url_for('static', filename='bg.png') }}" alt="Fundo">
+
+        <div class="galeria">
+            {% for i in range(4) %}
+                <div class="item">
+
+                    <img id="image{{i}}" src="{{ url_for('static', filename='Parafuso_' ~ (i + 1)|string ~ '.jpeg') }}" alt="Imagem {{i+1}}">
+                    <p id="txt{{i}}_0">Linha 1 - Img {{i+1}}</p>
+                    <p id="txt{{i}}_1">Linha 2 - Img {{i+1}}</p>
+                    <p id="txt{{i}}_2">Linha 3 - Img {{i+1}}</p>
+                    <p id="txt{{i}}_3">Linha 4 - Img {{i+1}}</p>
+                </div>
+            {% endfor %}
+        </div>
+
+        <div class="download">
+            <a href="{{ url_for('static', filename='Resultado.pdf') }}" target="_blank" class="botao-pdf">Baixar PDF</a>
+        </div>
+
+        <button id="meuBotao" class="action">Acionar</button>
+        <p id="mensagem" style="color: green;"></p> <!-- Aqui aparece o feedback -->
+
+        <script>
+            async function atualizarGaleria() {
+                try {
+
+                    const resposta = await fetch('/dados');
+                    const dados = await resposta.json(); // Esperado: lista com 4 sublistas (uma para cada imagem)
+                    console.log(dados);
+
+                    const imagens = ['Parafuso_1', 'Parafuso_2', 'Parafuso_3', 'Parafuso_4'];
+                    for (let i = 0; i < imagens.length; i++) {
+                        const img = document.getElementById(`image${i}`);
+                        img.src = `/static/${imagens[i]}.jpeg?t=${Date.now()}`; // Força atualização
+                        for (let j = 0; j < dados[i].length && j < 4; j++) {
+                            const paragrafo = document.getElementById(`txt${i}_${j}`);
+                            if (paragrafo) {
+                                paragrafo.textContent = dados[i][j];
+                            }
+                        }
+                    }
+
+                } catch (erro) {
+                    console.error('Erro ao buscar os dados:', erro);
+                }
+            }
+
+            setInterval(atualizarGaleria, 5000); // Atualiza a cada 5 segundos
+            atualizarGaleria(); // Atualiza ao carregar a página
+
+            document.getElementById("meuBotao").addEventListener("click", function () {
+                fetch("/botao", {
+                    method: "POST"
+                })
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById("mensagem").textContent = "✅ Ação enviada com sucesso!";
+                    // Esvazia a mensagem após 3 segundos (opcional)
+                    setTimeout(() => {
+                        document.getElementById("mensagem").textContent = "";
+                    }, 3000);
+                })
+                .catch(error => {
+                    document.getElementById("mensagem").textContent = "❌ Erro ao enviar ação.";
+                    document.getElementById("mensagem").style.color = "red";
+                });
+            });
+        </script>
+
+    </body>
+</html>

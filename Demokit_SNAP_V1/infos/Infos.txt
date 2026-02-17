@@ -1,0 +1,11 @@
+Linha 48 para alterar o IP do DXM
+
+Flask: Framework web usado para criar o servidor e as rotas.
+
+SQLAlchemy: ORM para interagir com o banco de dados SQLite.
+
+SocketIO: Biblioteca para comunicação em tempo real entre o servidor e o cliente.
+
+ModbusTCP: Protocolo de comunicação industrial usado para ler dados dos sensores.
+
+CustomTkinter: Biblioteca para criar uma interface gráfica simples, responsável por abrir a pagina web rapidamente.

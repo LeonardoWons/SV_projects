@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/alerta.css') }}">
+<link rel="shortcut icon" href="{{ url_for('static', filename='images/favicon.ico') }}">
+<script src="{{ url_for('static', filename='socket.io.min.js') }}"></script>
+</head>
+
+<body data-origem="{{ origem }}">
+
+<div class="container">
+
+    <h2 class="titulo">
+        Alertas {{ origem|capitalize }}
+    </h2>
+
+    <div class="acoes">
+        <form action="{{url_for('home')}}">
+                    <button class="btn btn-primary"> <b><</b> Voltar</button>
+        </form>
+        <button class="btn btn-primary" onclick="lerTodos()">Ler Todos</button>
+        <button class="btn btn-danger" onclick="apagarTodos()">Apagar Todos</button>
+    </div>
+
+    <table id="tabela-alertas" class="tabela-alertas">
+        <thead>
+            <tr>
+                <th>Data</th>
+                <th>Parâmetro</th>
+                <th>Valor</th>
+                <th>Limites</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+</div>
+
+<script>
+
+    document.addEventListener("DOMContentLoaded", function () {
+
+    const tbody = document.querySelector("#tabela-alertas tbody");
+
+    // Origem enviada pelo Flask
+    const origem = document.body.dataset.origem;
+
+    function carregarAlertas() {
+
+        fetch(`/api/alertas/${origem}`)
+            .then(res => res.json())
+            .then(data => {
+
+                tbody.innerHTML = "";
+
+                if (data.length === 0) {
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="5" style="text-align:center;">
+                                Nenhum alerta registrado.
+                            </td>
+                        </tr>
+                    `;
+                    return;
+                }
+
+                data.forEach(a => {
+
+                    const row = document.createElement("tr");
+
+                    if (!a.lido) {
+                        row.classList.add("alerta-novo");
+                    }
+
+                    row.innerHTML = `
+                        <td>${new Date(a.timestamp).toLocaleString()}</td>
+                        <td>${a.parametro}</td>
+                        <td>${a.valor}</td>
+                        <td>${a.limite_min} - ${a.lite_max ?? a.limite_max}</td>
+                        <td>
+                            <button class="btn btn-secondary" onclick="marcarLido(${a.id})">
+                                Lido
+                            </button>
+                            <button class="btn btn-danger" onclick="excluirAlerta(${a.id})">
+                                Excluir
+                            </button>
+                        </td>
+                    `;
+
+                    tbody.appendChild(row);
+                });
+            })
+            .catch(error => {
+                console.error("Erro ao carregar alertas:", error);
+            });
+    }
+
+    // =============================
+    // AÇÕES INDIVIDUAIS
+    // =============================
+
+    window.marcarLido = function (id) {
+
+        fetch(`/api/alerta/${id}/lido`, {
+            method: "POST"
+        })
+        .then(() => carregarAlertas())
+        .catch(error => console.error("Erro ao marcar como lido:", error));
+    };
+
+    window.excluirAlerta = function (id) {
+
+        if (!confirm("Deseja realmente excluir este alerta?"))
+            return;
+
+        fetch(`/api/alerta/${id}`, {
+            method: "DELETE"
+        })
+        .then(() => carregarAlertas())
+        .catch(error => console.error("Erro ao excluir alerta:", error));
+    };
+
+    // =============================
+    // AÇÕES EM MASSA
+    // =============================
+
+    window.lerTodos = function () {
+
+        fetch(`/api/alertas/${origem}/ler_todos`, {
+            method: "POST"
+        })
+        .then(() => carregarAlertas())
+        .catch(error => console.error("Erro ao marcar todos como lido:", error));
+    };
+
+    window.apagarTodos = function () {
+
+        if (!confirm("ATENÇÃO: Isso apagará todos os alertas. Deseja continuar?"))
+            return;
+
+        fetch(`/api/alertas/${origem}/apagar_todos`, {
+            method: "DELETE"
+        })
+        .then(() => carregarAlertas())
+        .catch(error => console.error("Erro ao apagar todos:", error));
+    };
+
+    // =============================
+    // AUTO REFRESH (opcional)
+    // =============================
+
+    setInterval(() => {
+        carregarAlertas();
+    }, 5000); // atualiza a cada 5 segundos
+
+    // Carrega ao iniciar
+    carregarAlertas();
+});
+
+
+</script>
+
+</body>
+
+</html>

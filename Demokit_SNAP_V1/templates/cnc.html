@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Monitoramento da CNC</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/cnc.css') }}">
+
+    <script src="{{ url_for('static', filename='socket.io.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='chart.js') }}"></script>
+    <script src="{{ url_for('static', filename='moment.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='chartjs-adapter-moment@1.0.0') }}"></script>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+</head>
+<body>
+    <div id="status-circle"></div>
+    <div id="line"></div>
+    <div id="content">
+
+        <div id="header">
+            <form action="{{url_for('home')}}">
+                <button class="back_button"> <b><</b> Voltar</button>
+            </form>
+            <div id="div_logo_title">
+                <img id="logo_title" src="{{ url_for('static',filename='images/logo.jpg') }}">
+                <h1 id="title">Monitoramento da CNC</h1>
+            </div>
+
+        </div>
+        <div id="cnc_barras">
+
+            <img id="cnc" src="{{ url_for('static',filename='images/cnc.png') }}">
+
+            <div class="container">
+                <div class="indicator" id="qm30_hf_a_z-indicator">
+                    <div class="label">Aceleração Z</div>
+                    <div class="bar-container">
+                        <div class="bar_scale">
+                            <div class="bar" id="qm30_hf_a_z-bar"></div>
+                            <div class="scale" id="qm30_hf_a_z-scale"></div>
+                        </div>
+                    </div>
+                    <div class="value" id="qm30_hf_a_z-value">0</div>
+                </div>
+                <div class="indicator" id="qm30_hf_a_x-indicator">
+                    <div class="label">Aceleração X</div>
+                    <div class="bar-container">
+                        <div class="bar_scale">
+                            <div class="bar" id="qm30_hf_a_x-bar"></div>
+                            <div class="scale" id="qm30_hf_a_x-scale"></div>
+                        </div>
+                    </div>
+                    <div class="value" id="qm30_hf_a_x-value">0</div>
+                </div>
+
+
+
+                <div class="indicator" id="qm30_v_mm_z-indicator">
+                    <div class="label">Velocidade Z</div>
+                    <div class="bar-container">
+                        <div class="bar_scale">
+                            <div class="bar" id="qm30_v_mm_z-bar"></div>
+                            <div class="scale" id="qm30_v_mm_z-scale"></div>
+                        </div>
+                    </div>
+                    <div class="value" id="qm30_v_mm_z-value">0</div>
+                </div>
+                <div class="indicator" id="qm30_v_mm_x-indicator">
+                    <div class="label">Velocidade X</div>
+                    <div class="bar-container">
+                        <div class="bar_scale">
+                            <div class="bar" id="qm30_v_mm_x-bar"></div>
+                            <div class="scale" id="qm30_v_mm_x-scale"></div>
+                        </div>
+                    </div>
+                    <div class="value" id="qm30_v_mm_x-value">0</div>
+                </div>
+
+
+                <div class="indicator" id="temperatura-indicator">
+                    <div class="label">Temperatura</div>
+                    <div class="bar-container">
+                        <div class="bar_scale">
+                            <div class="bar" id="temperatura-bar"></div>
+                            <div class="scale" id="temperatura-scale"></div>
+                        </div>
+                    </div>
+                    <div class="value" id="temperatura-value">0</div>
+                </div>
+                <div class="indicator" id="tempo-indicator">
+                    <div class="label">Meta de produção</div>
+                    <div class="bar-container" style="background: linear-gradient(to bottom, green, yellow, red);">
+                        <div class="bar_scale">
+                            <div class="bar" id="tempo-bar"></div>
+                            <div class="scale" id="tempo-scale"></div>
+                        </div>
+                    </div>
+                    <div class="value" id="tempo-value">0%</div>
+                </div>
+                <div class="indicator" id="status-difference-indicator">
+                    <div class="label">Tempo ligada / tempo total</div>
+                    <div class="bar-container" style="background: linear-gradient(to bottom, green, yellow, red);">
+                        <div class="bar_scale">
+                            <div class="bar" id="status-difference-bar"></div>
+                            <div class="scale" id="status-difference-scale"></div>
+                        </div>
+                    </div>
+                    <div class="value" id="status-difference-value">0%</div>
+                </div>
+            </div>
+        </div>
+        <div id="dowload_button">
+            <form action="{{ url_for('download') }}" method="post">
+            <button value="cnc" name="button" class="back_button" type="submit">Download</button>
+        </form>
+        </div>
+
+    </div>
+
+    <script src="{{ url_for('static',filename='js/cnc.js') }}"></script>
+</body>
+</html>

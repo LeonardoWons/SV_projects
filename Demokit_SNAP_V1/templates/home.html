@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Industria</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/agua.css') }}">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='images/favicon.ico') }}">
+    <script src="{{ url_for('static', filename='socket.io.min.js') }}"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+</head>
+<body>
+    <div id="line" style="margin-bottom: 2vh;"></div>
+    <img id="logo" src="{{ url_for('static',filename='images/logo.jpg') }}">
+    <div class="image-container" id="fact_buttons">
+        <img class="responsive-image" id="factory" src="{{ url_for('static',filename='images/factory.png') }}">
+
+        <form action="{{url_for('cnc')}}">
+            <button class="area_button overlay-element" id="cnc" type="submit" >CNC machine</button>
+        </form>
+        <form action="{{url_for('agua')}}">
+            <button class="area_button overlay-element" id="water" type="submit">Tank de agua</button>
+        </form>
+        <form action="{{url_for('sala')}}">
+            <button class="area_button overlay-element" id="room" type="submit">Sala de comando</button>
+        </form>
+    </div>
+
+
+
+    <div id="text_boxes">
+        <div id="texto_blabla">
+            <h1 style="margin: 0;">Status do DXM</h1>
+            <div id='dxm' style="padding: 1vh; color: green;"> Analizando ... </div>
+        </div>
+        <div id="texto_titulo">
+            <h1>Dashboard virtual: Monitoramento de dados</h1>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('cnc').addEventListener('mouseover', function() {
+            document.getElementById('box_cnc').classList.add('boxshadow');
+        });
+
+        document.getElementById('cnc').addEventListener('mouseout', function() {
+            document.getElementById('box_cnc').classList.remove('boxshadow');
+        });
+
+        document.getElementById('water').addEventListener('mouseover', function() {
+            document.getElementById('box_water').classList.add('boxshadow');
+        });
+
+        document.getElementById('water').addEventListener('mouseout', function() {
+            document.getElementById('box_water').classList.remove('boxshadow');
+        });
+
+        document.getElementById('room').addEventListener('mouseover', function() {
+            document.getElementById('box_room').classList.add('boxshadow_room');
+        });
+
+        document.getElementById('room').addEventListener('mouseout', function() {
+            document.getElementById('box_room').classList.remove('boxshadow_room');
+        });
+        document.addEventListener("DOMContentLoaded", () => {
+            var socket = io.connect('http://' + document.domain + ':' + location.port + '/');
+            socket.on('sensor_data', function(data) {
+                 const texto = document.getElementById('dxm');
+                 texto.textContent = data.dxm;
+                 if (data.dxm == 'DXM está offline :('){
+                    texto.style.setProperty('color', 'red');
+                 }
+            });
+        });
+    </script>
+
+</body>
+</html>
+

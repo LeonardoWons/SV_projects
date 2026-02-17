@@ -1,0 +1,182 @@
+html{
+
+    min-height: 100%;
+}
+
+body{
+    margin: 3vh 5vh 0;
+}
+
+#line {
+    background: white linear-gradient(rgba(255, 214, 0, 0.3019607843), #ffd600);
+    height: 5.5vh;
+    overflow: hidden;
+    border-radius: 1.5vh;
+}
+
+#logo{
+    position: absolute;
+    z-index: 1;
+    width: 30vh;
+    right: 5vh;
+}
+
+.area_button{
+    position: absolute;
+    background: linear-gradient(to bottom right, #ffd84f, #fbc400);
+    border-radius: 12px;
+    border-width: 2px;
+    color: #000000;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 2.5;
+    outline: transparent;
+    padding: 0 1rem;
+    text-align: center;
+    text-decoration: none;
+    transition: box-shadow .2s ease-in-out;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+    white-space: nowrap;
+}
+
+form{
+    position: absolute;
+    width:fit-content;
+}
+
+#content{
+    position: relative;
+    margin: 0 5vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: stretch;
+}
+
+#header{
+}
+
+.back_button{
+    position: absolute;
+    top: 47vh;
+    left: -7vh;
+    background: linear-gradient(to bottom right, #ffd84f, #fbc400);
+    border-radius: 12px;
+    border-width: 2px;
+    color: #000000;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 2vh;
+    font-weight: 500;
+    line-height: 2.5;
+    outline: transparent;
+    text-decoration: none;
+    transition: box-shadow .2s ease-in-out;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+    white-space: nowrap;
+}
+
+
+.download_button{
+    background: linear-gradient(to bottom right, #ffd84f, #fbc400);
+    border-radius: 12px;
+    border-width: 2px;
+    color: #000000;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 2.5;
+    outline: transparent;
+    padding: 0 1rem;
+    text-align: center;
+    text-decoration: none;
+    transition: box-shadow .2s ease-in-out;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+    white-space: nowrap;
+    position: absolute;
+    top: 68vh;
+    left: 91vh;
+}
+
+#div_logo_title{
+    position: absolute;
+    top: 31vh;
+    transform: rotate3d(0, 2, .15, 306deg);
+    right: -9vh;
+    width: fit-content;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#logo_title{
+    width: 37vh;
+}
+
+#title{
+    text-align: center;
+    margin: 0;
+    font-size: 5vh;
+}
+
+#myChart {
+    width: 90vh !important;
+    height: 45vh !important;
+}
+
+#dowload_button{
+    text-align: -webkit-center
+}
+
+#graphs{
+    display: flex;
+}
+
+#chart2{
+    position: absolute;
+    width: 61vh !important;
+    height: 34vh!important;
+    top: 27.5vh;
+    left: 68vh;
+}
+
+#sala{
+    position: fixed;
+    width: 107%;
+    z-index: -1;
+    height: 100vh;
+    left: -5vh;
+    top: 0;
+}
+
+.value{
+    font-size: 3vh;
+}
+
+#temp{
+    color: red;
+}
+
+#humid{
+    color: blue;
+}
+
+#sensor_values{
+    display: flex;
+    width: fit-content;
+    position: absolute;
+    top: 52vh;
+    left: 46vh;
+    height: 9vh;
+    flex-direction: column;
+    justify-content: space-around;
+}

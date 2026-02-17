@@ -1,0 +1,303 @@
+html{
+
+    min-height: 100%;
+}
+
+body{
+    margin: 3vh 5vh 0;
+}
+
+#line {
+    background: white linear-gradient(rgba(255, 214, 0, 0.3019607843), #ffd600);
+    height: 5.5vh;
+    overflow: hidden;
+    border-radius: 1.5vh;
+}
+
+#logo{
+    position: absolute;
+    z-index: 1;
+    width: 30vh;
+    right: 5vh;
+}
+
+#fact_buttons {
+    width: 100%;
+    height: auto;
+    text-align: center;
+}
+
+#factory {
+    width: 137.4vh;
+}
+
+.area_button{
+    position: absolute;
+    background: linear-gradient(to bottom right, #ffd84f, #fbc400);
+    border-radius: 12px;
+    border-width: 2px;
+    color: #000000;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 2.5;
+    outline: transparent;
+    padding: 0 1rem;
+    text-align: center;
+    text-decoration: none;
+    transition: box-shadow .2s ease-in-out;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+    white-space: nowrap;
+}
+
+.box{
+    background: #ffffff00;
+    border: 0;
+    border-radius: 3vh;
+    transition: box-shadow 0.5s;
+}
+
+.boxshadow_room{
+    box-shadow: inset 20px 0px 2rem 0px #fbc400, inset -1px -5px 2rem 0px #fbc400;
+}
+
+.boxshadow{
+    box-shadow: inset 0 0 1.5rem 0px #fbc400;
+}
+
+#box_water{
+    position: absolute;
+    top: 16vh;
+    left: 107.5vh;
+    width: 15vh;
+    height: 13vh;
+}
+
+#water{
+    left: 105.5vh;
+    top: 28vh;
+}
+
+#box_cnc{
+    position: absolute;
+    top: 24vh;
+    left: 82vh;
+    width: 16vh;
+    height: 12vh;
+    transform: rotate3d(0, 4, 2, 330deg);
+}
+
+#cnc{
+    left: 82vh;
+    top: 34vh;
+    transform: rotate3d(0, 4, 2, 325deg);
+}
+
+
+#box_room{
+    position: absolute;
+    z-index: 1;
+    top: 22vh;
+    left: 128vh;
+    width: 26vh;
+    height: 13vh;
+    clip-path: polygon(67% -38%, 124% 32%, 114% 48%, 71% 106%, 10% 89%, 5% 35%);
+    transform: rotate3d(0, 4, 2, 34deg);
+}
+
+#room{
+    left: 126vh;
+    top: 34vh;
+    transform: rotate3d(71, 120, 49, 43deg);
+}
+
+form{
+    width:fit-content;
+}
+
+#content{
+    margin: 0 5vh;
+    min-height: 89vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+}
+
+#header{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.back_button{
+    background: linear-gradient(to bottom right, #ffd84f, #fbc400);
+    border-radius: 12px;
+    border-width: 2px;
+    color: #000000;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 2.5;
+    outline: transparent;
+    padding: 0 1rem;
+    text-align: center;
+    text-decoration: none;
+    transition: box-shadow .2s ease-in-out;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+    white-space: nowrap;
+}
+
+#div_logo_title{
+    width: fit-content;
+    display: flex;
+    flex-direction: column;
+}
+
+#logo_title{
+    width: 30vh;
+}
+
+#title{
+    text-align: center;
+    margin: 1vh 0;
+}
+
+#q4x_lazer{
+    width: fit-content;
+    display: flex;
+    align-items: center;
+}
+
+#valor_q4{
+
+margin: 0;
+}
+
+#q4x{
+    width: 20vh;
+    object-fit: cover;
+}
+#lazer{
+    width: 70vh;
+    height: 3vh;
+    object-fit: cover;
+    transition: 0.5s ease-in-out;
+}
+
+#graph_tank{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
+
+#myChart {
+    width: 90vh !important;
+    height: 45vh !important;
+}
+
+#tank-container {
+    width: 30vh;
+    height: 40vh;
+    border: 5px solid black;
+    border-radius: 7vh;
+    position: relative;
+    overflow: hidden;
+    background-color: black;
+}
+
+#water-level {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    background-color: #09f;
+    overflow: hidden;
+    mask-size: cover;
+    animation: wave 3s ease-in-out infinite;
+    transition: height 0.5s ease-in-out;
+}
+
+@keyframes wave {
+    0%, 100% {
+        clip-path: polygon(
+            0% 2.4vh,
+            6% 3.4vh,
+            13% 4.4vh,
+            19% 4.6vh,
+            26% 4.8vh,
+            33% 4.6vh,
+            39% 4.4vh,
+            46% 3.4vh,
+            50% 2.4vh,
+            56% 1.4vh,
+            63% 0.4vh,
+            69% 0.2vh,
+            76% 0vh,
+            83% 0.2vh,
+            89% 0.4vh,
+            96% 1.4vh,
+            100% 2.4vh,
+            100% 40vh,
+            0% 40vh
+        );
+    }
+
+    50% {
+        clip-path: polygon(
+            0% 3vh,
+            6% 4vh,
+            13% 4.6vh,
+            19% 5vh,
+            26% 5.4vh,
+            33% 5.6vh,
+            39% 5.4vh,
+            46% 4.6vh,
+            50% 4vh,
+            56% 3.4vh,
+            63% 2.6vh,
+            69% 2vh,
+            76% 1.6vh,
+            83% 2vh,
+            89% 2.6vh,
+            96% 3.4vh,
+            100% 4vh,
+            100% 40vh,
+            0% 40vh
+        );
+    }
+}
+
+#dowload_button{
+    text-align: -webkit-center
+}
+
+
+#texto_blabla{
+    border: 4px solid #ffd600;
+    border-radius: 2vh;
+    width: 44vh;
+    height: 22vh;
+    position: absolute;
+    bottom: 9vh;
+    right: 5vh;
+    padding: 1vh;
+    text-align: center;
+}
+
+#texto_titulo{
+    border: 4px solid #ffd600;
+    border-radius: 2vh;
+    width: 44vh;
+    height: 22vh;
+    position: absolute;
+    bottom: 9vh;
+    left: 5vh;
+    padding: 1vh;
+    text-align: center;
+}
