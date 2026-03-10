@@ -429,3 +429,5 @@ def getAllData(client: ModbusSerialClient):
 
         "IS_EQUIPMENT_IN_REVERSE": status[1],
     }
+
+print(getGPSData)

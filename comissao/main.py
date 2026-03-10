@@ -17,7 +17,7 @@ today = datetime.datetime.today().strftime('%d-%m-%Y')  # Usado para o nome do a
 
 # Configuração do WebDriver
 options = webdriver.ChromeOptions()
-options.add_argument("--headless")  # Ative se quiser rodar em segundo plano
+#options.add_argument("--headless")  # Ative se quiser rodar em segundo plano
 service = Service(ChromeDriverManager().install())
 driver = webdriver.Chrome(service=service, options=options)
 driver.maximize_window()

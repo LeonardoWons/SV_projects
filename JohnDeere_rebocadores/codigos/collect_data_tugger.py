@@ -1,3 +1,5 @@
+import time
+
 from pymodbus.client import ModbusSerialClient
 from struct import unpack as Montafloat
 
@@ -13,12 +15,12 @@ address_status_value = 40001
 # Function to collect GPS data / Função para coletar dados de GPS
 def get_gps():
     # Create Modbus client / Criar cliente Modbus
-    client_gps = ModbusSerialClient(method="rtu", port="COM2", baudrate=19200, timeout=1, parity="N", stopbits=1, bytesize=8)
+    client_gps = ModbusSerialClient(port="COM14", baudrate=19200, timeout=1, parity="N", stopbits=1, bytesize=8)
     client_gps.connect()
 
     try:
         # Read latitude, longitude, and altitude / Ler latitude, longitude e altitude
-        read = client_gps.read_holding_registers(100, 10, slave_gps)
+        read = client_gps.read_holding_registers(100, count=10, slave=slave_gps)
         latitude = Montafloat('!f',
                               bytes.fromhex('{0:04x}'.format(read.registers[0]) + '{0:04x}'.format(read.registers[1])))
         longitude = Montafloat('!f',
@@ -39,7 +41,7 @@ def get_gps():
 
     try:
         # Collect signal quality and number of satellites / Coletar qualidade de sinal e número de satélites
-        read = client_gps.read_holding_registers(2004, 4, slave_gps)
+        read = client_gps.read_holding_registers(2004, count=4, slave=slave_gps)
 
         signal_quality = Montafloat('!f', bytes.fromhex(
             '{0:04x}'.format(read.registers[0]) + '{0:04x}'.format(read.registers[1])))
@@ -59,7 +61,7 @@ def get_gps():
 
     try:
         # Collect PDOP, HDOP, and VDOP values / Coletar valores de PDOP, HDOP e VDOP
-        read = client_gps.read_holding_registers(2128, 6, slave_gps)
+        read = client_gps.read_holding_registers(2128, count=6, slave=slave_gps)
         pdop = Montafloat('!f',
                           bytes.fromhex('{0:04x}'.format(read.registers[0]) + '{0:04x}'.format(read.registers[1])))
         hdop = Montafloat('!f',
@@ -79,7 +81,7 @@ def get_gps():
 
     try:
         # Collect speed and direction / Coletar velocidade e direção
-        read = client_gps.read_holding_registers(2206, 4, slave_gps)
+        read = client_gps.read_holding_registers(2206, count=4, slave=slave_gps)
         speed = Montafloat('!f', bytes.fromhex('{0:04x}'.format(read.registers[0]) + '{0:02x}'.format(read.registers[1])))
         direction = Montafloat('!f', bytes.fromhex('{0:04x}'.format(read.registers[2]) + '{0:02x}'.format(read.registers[3])))
         speed = str(speed[0])[:20]
@@ -99,11 +101,11 @@ def get_gps():
 # Function to get equipment status / Função para coletar o status do equipamento
 def get_status():
     # Create Modbus client / Criar cliente Modbus
-    clientt = ModbusSerialClient(method="rtu", port="COM2", baudrate=19200, timeout=1, parity="N", stopbits=1, bytesize=8)
+    clientt = ModbusSerialClient(port="COM12", baudrate=19200, timeout=1, parity="N", stopbits=1, bytesize=8)
     clientt.connect()
 
     try:
-        read_s = clientt.read_holding_registers(address_status_value, 3, slave_status)
+        read_s = clientt.read_holding_registers(address_status_value, count=3, slave=slave_status)
         status_chave = str(read_s.registers[0])[:2]
         status_re = str(read_s.registers[1])[:2]
 
@@ -114,3 +116,7 @@ def get_status():
     clientt.close()
 
     return [status_chave, status_re]
+
+while True:
+    time.sleep(1)
+    print(get_gps())

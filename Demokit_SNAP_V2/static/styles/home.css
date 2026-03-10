@@ -1,11 +1,11 @@
-:root {
-  --primary-gradient: linear-gradient(to bottom right, #ffd84f, #fbc400);
-  --secondary-gradient: white linear-gradient(rgba(255, 214, 0, 0.3), #ffd600);
-  --spacing-unit: 1rem;
-  --border-radius: 0.75rem;
-  --box-shadow: 0 0 1.5rem 0px #fbc400;
-  --box-shadow-room: inset 20px 0px 2rem 0px #fbc400, inset -1px -5px 2rem 0px #fbc400;
-}
+        :root {
+          --primary-gradient: linear-gradient(to bottom right, #ffd84f, #fbc400);
+          --secondary-gradient: white linear-gradient(rgba(255, 214, 0, 0.3), #ffd600);
+          --spacing-unit: 1rem;
+          --border-radius: 0.75rem;
+          --box-shadow: 0 0 1.5rem 0px #fbc400;
+          --box-shadow-room: inset 20px 0px 2rem 0px #fbc400, inset -1px -5px 2rem 0px #fbc400;
+        }
 
         body {
             margin: 0;
@@ -50,7 +50,7 @@
             top: 50%;
             left: 50%;
             transform: translateX(-50%);
-            width: 40vw;
+            width: 60%;
             height: 35vh;
             background-color: gray;
             border: 0.4vw solid black;
@@ -85,6 +85,7 @@
             width: 25%;
             align-items: center;
             justify-content: space-evenly;
+            border: 1px black dashed;
         }
 
         .button_p {
@@ -108,4 +109,53 @@
             font-family: monospace;
             font-weight: bolder;
         }
+
+        .painel-home {
+            position: absolute;
+            margin-top: 0;
+            height: 100%;
+            width: 100%;
+        }
+
+        .maquina {
+            position: relative;
+            height: 5vw;
+            width: 5vw;
+            text-align: center;
+        }
+
+        .img-maquina {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            top: 0;
+            left: 0;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .img-maquina.ativo {
+            opacity: 1;
+        }
+
+        .maquina h3 {
+            position: absolute;
+            bottom: -30px;
+            width: 100%;
+        }
+
+        #cncBox{
+        top: 17%;
+        left: 22%;
+        }
+        #estufaBox{
+        top: 0%;
+        left: 50%;
+        }
+        #tanqueBox{
+            top: 5%;
+            left: 75.2%;
+        }
+
     

@@ -1,4 +1,5 @@
 # Importações necessárias para o funcionamento do aplicativo
+import time
 from random import randint
 from datetime import datetime, timezone
 from flask import Flask, render_template, send_from_directory, jsonify, request, send_file
@@ -26,6 +27,11 @@ db = SQLAlchemy(app)
 socketio = SocketIO(app, cors_allowed_origins="*")
 
 timestamp = datetime.now(timezone.utc)
+
+treinamento_qm30_ativo = False
+qm30_remain_treinamento = 0
+
+modbus_lock = threading.Lock()
 
 # Definição do modelo de dados para armazenar as leituras dos sensores
 class SensorData(db.Model):
@@ -80,7 +86,7 @@ LIMITES = {
         "qm30_hf_a_y": {"min": 0, "max": 3000},
         "qm30_v_mm_z": {"min": 10, "max": 3000},
         "qm30_hf_a_z": {"min": 0, "max": 3000},
-        "value_qm30_temp": {"min": 10, "max": 35},
+        "value_qm30_temp": {"min": 10, "max": 50},
         "value_b22_status": {"min": -1, "max": 2},
         "value_b22_peca": {"min": 10, "max": 9999},
         "s15cct_value": {"min": -1, "max": 9999},
@@ -93,7 +99,7 @@ LIMITES = {
         "s24ASD_dewpoint": {"min": 5, "max": 25},
     },
     "tanque": {
-        "value_q4x": {"min": 10, "max": 90}
+        "value_q4x": {"min": -1, "max": 90}
     }
 }
 
@@ -119,121 +125,148 @@ reset_o_reset = client.write_single_register(601, 0)
 def read_sensors():
     while not stop_event.is_set():  # Loop enquanto o evento de parada não for acionado
 
-        if client.open():  # Verifica se a conexão com o dispositivo DXM está aberta
-            # Leitura dos registros dos sensores
-            q4x_s15c_i = client.read_holding_registers(405, 1)
+        time.sleep(0.5)
 
-            q4x_0_100 = ((q4x_s15c_i[0]-40)/160)*100  # Conversão do valor do sensor Q4
+        with modbus_lock:
 
-            th_rh_temp = client.read_holding_registers(100, 2)
-            th_rh = th_rh_temp[0] / 100  # Umidade relativa
-            th_temp = th_rh_temp[1] / 20  # Temperatura ambiente
+            if client.open():  # Verifica se a conexão com o dispositivo DXM está aberta
+                q4x_s15c_i = client.read_holding_registers(405, 1)# Leitura dos registros dos sensores
 
-            qm30_values = client.read_holding_registers(499, 7)
-            qm30_v_mm_x = qm30_values[0]           # Velocidade X do sensor QM30
-            qm30_hf_a_x = qm30_values[1]           # Aceleração X do sensor QM30
-            qm30_v_mm_y = qm30_values[2]           # Velocidade Y do sensor QM30
-            qm30_hf_a_y = qm30_values[3]           # Aceleração Y do sensor QM30
-            qm30_v_mm_z = qm30_values[4]           # Aceleração Z do sensor QM30
-            qm30_hf_a_z = qm30_values[5]           # Velocidade Z do sensor QM30
-            qm30_temp_certo = qm30_values[6]/100   # Temperatura do sensor QM30
+                q4x_0_100 = ((q4x_s15c_i[0]-40)/160)*100  # Conversão do valor do sensor Q4
 
-            b22_pin4_stats_pin2_count = client.read_holding_registers(599, 2)  # Status e Contagem de peças do sensor B22
+                th_rh_temp = client.read_holding_registers(100, 2)
+                th_rh = th_rh_temp[0] / 100  # Umidade relativa
+                th_temp = th_rh_temp[1] / 20  # Temperatura ambiente
 
-            s15c_ct_value = (client.read_holding_registers(699, 1))[0] / 100 # Valores S15CT
+                qm30_values = client.read_holding_registers(499, 9)
+                qm30_v_mm_x = qm30_values[0]           # Velocidade X do sensor QM30
+                qm30_hf_a_x = qm30_values[1]           # Aceleração X do sensor QM30
+                qm30_v_mm_y = qm30_values[2]           # Velocidade Y do sensor QM30
+                qm30_hf_a_y = qm30_values[3]           # Aceleração Y do sensor QM30
+                qm30_v_mm_z = qm30_values[4]           # Aceleração Z do sensor QM30
+                qm30_hf_a_z = qm30_values[5]           # Velocidade Z do sensor QM30
+                qm30_temp_certo = qm30_values[6]/100   # Temperatura do sensor QM30
+                qm30_remaining = qm30_values[7]/100    # Quantidade de samples restantes do sensor QM30
 
-            s24_values = client.read_holding_registers(799, 3)  # Valores S24 em C°
-            s24_hum_corrigido = s24_values[0] / 100
-            s24_temp_corrigido = s24_values[1] / 20
-            s24_dp_corrigido = s24_values[2] / 100
+                b22_pin4_stats_pin2_count = client.read_holding_registers(599, 2)  # Status e Contagem de peças do sensor B22
 
-            # Armazenamento dos dados no banco de dados
-            with app.app_context():
-                new_data = SensorData(value_q4x=q4x_0_100,
-                                      value_temp=th_temp, value_humid=th_rh,
-                                      qm30_v_mm_x=qm30_v_mm_x, qm30_hf_a_x=qm30_hf_a_x,
-                                      qm30_v_mm_y=qm30_v_mm_y, qm30_hf_a_y=qm30_hf_a_y,
-                                      qm30_v_mm_z=qm30_v_mm_z, qm30_hf_a_z=qm30_hf_a_z,
-                                      value_qm30_temp=qm30_temp_certo,
-                                      value_b22_status=b22_pin4_stats_pin2_count[0], value_b22_peca=b22_pin4_stats_pin2_count[1],
-                                      s15cct_value = s15c_ct_value,
-                                      s24ASD_humidity = s24_hum_corrigido, s24ASD_temperature = s24_temp_corrigido,
-                                      s24ASD_dewpoint = s24_dp_corrigido
-                                      )
-                db.session.add(new_data)
-                db.session.commit()
+                s15c_ct_value = (client.read_holding_registers(699, 1))[0] / 100 # Valores S15CT
 
-            # Envio dos dados para o frontend via WebSocket
-            socketio.emit('sensor_data', {
-                                          'q4x': q4x_0_100, 'timestamp': datetime.utcnow().isoformat(),
-                                          'value_temp': th_temp, 'value_humid': th_rh,
-                                          'qm30_v_mm_x': qm30_v_mm_x, 'qm30_hf_a_x': qm30_hf_a_x,
-                                          'qm30_v_mm_y': qm30_v_mm_y, 'qm30_hf_a_y': qm30_hf_a_y,
-                                          'qm30_v_mm_z': qm30_v_mm_z, 'qm30_hf_a_z': qm30_hf_a_z,
-                                          'value_qm30_temp': qm30_temp_certo,
-                                          'value_b22_status': b22_pin4_stats_pin2_count[0], 'value_b22_peca': b22_pin4_stats_pin2_count[1],
-                                          's15cct_value': s15c_ct_value,
-                                          's24ASD_humidity' : s24_hum_corrigido, 's24ASD_temperature' : s24_temp_corrigido,
-                                          's24ASD_dewpoint' : s24_dp_corrigido,
-                                          'dxm': 'DXM está online :)'}, namespace='/')
+                s24_values = client.read_holding_registers(799, 3)  # Valores S24 em C°
+                s24_hum_corrigido = s24_values[0] / 100
+                s24_temp_corrigido = s24_values[1] / 20
+                s24_dp_corrigido = s24_values[2] / 100
 
-            verificar_alertas("cnc", {
-                "qm30_v_mm_x": qm30_v_mm_x,
-                "qm30_hf_a_x": qm30_hf_a_x,
-                "qm30_v_mm_y": qm30_v_mm_y,
-                "qm30_hf_a_y": qm30_hf_a_y,
-                "qm30_v_mm_z": qm30_v_mm_z,
-                "qm30_hf_a_z": qm30_hf_a_z,
-                "value_qm30_temp": qm30_temp_certo,
-                "value_b22_status": b22_pin4_stats_pin2_count[0],
-                "value_b22_peca": b22_pin4_stats_pin2_count[1],
-                "s15cct_value": s15c_ct_value
-            })
+                # Armazenamento dos dados no banco de dados
+                with app.app_context():
+                    new_data = SensorData(value_q4x=q4x_0_100,
+                                          value_temp=th_temp, value_humid=th_rh,
+                                          qm30_v_mm_x=qm30_v_mm_x, qm30_hf_a_x=qm30_hf_a_x,
+                                          qm30_v_mm_y=qm30_v_mm_y, qm30_hf_a_y=qm30_hf_a_y,
+                                          qm30_v_mm_z=qm30_v_mm_z, qm30_hf_a_z=qm30_hf_a_z,
+                                          value_qm30_temp=qm30_temp_certo,
+                                          value_b22_status=b22_pin4_stats_pin2_count[0], value_b22_peca=b22_pin4_stats_pin2_count[1],
+                                          s15cct_value = s15c_ct_value,
+                                          s24ASD_humidity = s24_hum_corrigido, s24ASD_temperature = s24_temp_corrigido,
+                                          s24ASD_dewpoint = s24_dp_corrigido
+                                          )
+                    db.session.add(new_data)
+                    db.session.commit()
 
-            verificar_alertas("estufa", {
-                "value_temp": th_temp,
-                "value_humid": th_rh,
-                "s24ASD_temperature": s24_temp_corrigido,
-                "s24ASD_humidity": s24_hum_corrigido,
-                "s24ASD_dewpoint": s24_dp_corrigido
-            })
+                # Envio dos dados para o frontend via WebSocket
+                socketio.emit('sensor_data', {
+                                              'q4x': q4x_0_100, 'timestamp': datetime.utcnow().isoformat(),
+                                              'value_temp': th_temp, 'value_humid': th_rh,
+                                              'qm30_v_mm_x': qm30_v_mm_x, 'qm30_hf_a_x': qm30_hf_a_x,
+                                              'qm30_v_mm_y': qm30_v_mm_y, 'qm30_hf_a_y': qm30_hf_a_y,
+                                              'qm30_v_mm_z': qm30_v_mm_z, 'qm30_hf_a_z': qm30_hf_a_z,
+                                              'value_qm30_temp': qm30_temp_certo, 'qm30_remaining': qm30_remaining,
+                                              'value_b22_status': b22_pin4_stats_pin2_count[0], 'value_b22_peca': b22_pin4_stats_pin2_count[1],
+                                              's15cct_value': s15c_ct_value,
+                                              's24ASD_humidity' : s24_hum_corrigido, 's24ASD_temperature' : s24_temp_corrigido,
+                                              's24ASD_dewpoint' : s24_dp_corrigido,
+                                              'dxm': 'DXM está online :)'}, namespace='/')
 
-            verificar_alertas("tanque", {
-                "value_q4x": q4x_0_100
-            })
+                verificar_alertas("cnc", {
+                    "qm30_v_mm_x": qm30_v_mm_x,
+                    "qm30_hf_a_x": qm30_hf_a_x,
+                    "qm30_v_mm_y": qm30_v_mm_y,
+                    "qm30_hf_a_y": qm30_hf_a_y,
+                    "qm30_v_mm_z": qm30_v_mm_z,
+                    "qm30_hf_a_z": qm30_hf_a_z,
+                    "value_qm30_temp": qm30_temp_certo,
+                    "value_b22_status": b22_pin4_stats_pin2_count[0],
+                    "value_b22_peca": b22_pin4_stats_pin2_count[1],
+                    "s15cct_value": s15c_ct_value
+                })
 
-            client.close()
+                verificar_alertas("estufa", {
+                    "value_temp": th_temp,
+                    "value_humid": th_rh,
+                    "s24ASD_temperature": s24_temp_corrigido,
+                    "s24ASD_humidity": s24_hum_corrigido,
+                    "s24ASD_dewpoint": s24_dp_corrigido
+                })
 
-        else:
+                verificar_alertas("tanque", {
+                    "value_q4x": q4x_0_100
+                })
 
-            # Armazenamento dos dados no banco de dados
-            with app.app_context():
-                new_data = SensorData(value_q4x=randint(0,99),
-                                      value_temp=randint(0,99), value_humid=randint(0,99),
-                                      qm30_v_mm_x=randint(0,99), qm30_hf_a_x=randint(0,99),
-                                      qm30_v_mm_y=randint(0,99), qm30_hf_a_y=randint(0,99),
-                                      qm30_v_mm_z=randint(0,99), qm30_hf_a_z=randint(0,99),
-                                      value_qm30_temp=randint(0,99),
-                                      value_b22_status=randint(0,1), value_b22_peca=randint(0,99),
-                                      s15cct_value=randint(0,99),
-                                      s24ASD_humidity=randint(0,99), s24ASD_temperature=randint(0,99),
-                                      s24ASD_dewpoint=randint(0,99))
-                db.session.add(new_data)
-                db.session.commit()
+                client.close()
 
-            # Envio de dados padrão caso a conexão com o DXM falhe
-            socketio.emit('sensor_data', {
-                                          'q4x': randint(0,99), 'timestamp': datetime.utcnow().isoformat(),
-                                          'value_temp': randint(0,99), 'value_humid': randint(0,99),
-                                          'qm30_v_mm_x': randint(0,99), 'qm30_hf_a_x': randint(0,99),
-                                          'qm30_v_mm_y': randint(0,99), 'qm30_hf_a_y': randint(0,99),
-                                          'qm30_v_mm_z': randint(0,99), 'qm30_hf_a_z': randint(0,99),
-                                          'value_qm30_temp': randint(0,99),
-                                          'value_b22_status': randint(0,1), 'value_b22_peca': randint(0,99),
-                                          's15cct_value': randint(0,99),
-                                          's24ASD_humidity' : randint(0,99), 's24ASD_temperature' : randint(0,99),
-                                          's24ASD_dewpoint' : randint(0,99),
-                                          'dxm': 'DXM está offline :('}, namespace='/')
+            else:
+
+                # Armazenamento dos dados no banco de dados
+                with app.app_context():
+                    new_data = SensorData(value_q4x=randint(0,99),
+                                          value_temp=randint(0,99), value_humid=randint(0,99),
+                                          qm30_v_mm_x=randint(0,99), qm30_hf_a_x=randint(0,99),
+                                          qm30_v_mm_y=randint(0,99), qm30_hf_a_y=randint(0,99),
+                                          qm30_v_mm_z=randint(0,99), qm30_hf_a_z=randint(0,99),
+                                          value_qm30_temp=randint(0,99),
+                                          value_b22_status=randint(0,1), value_b22_peca=randint(0,99),
+                                          s15cct_value=randint(0,99),
+                                          s24ASD_humidity=randint(0,99), s24ASD_temperature=randint(0,99),
+                                          s24ASD_dewpoint=randint(0,99))
+                    db.session.add(new_data)
+                    db.session.commit()
+
+                # Envio de dados padrão caso a conexão com o DXM falhe
+                socketio.emit('sensor_data', {
+                                              'q4x': randint(0,99), 'timestamp': datetime.utcnow().isoformat(),
+                                              'value_temp': randint(0,99), 'value_humid': randint(0,99),
+                                              'qm30_v_mm_x': randint(0,99), 'qm30_hf_a_x': randint(0,99),
+                                              'qm30_v_mm_y': randint(0,99), 'qm30_hf_a_y': randint(0,99),
+                                              'qm30_v_mm_z': randint(0,99), 'qm30_hf_a_z': randint(0,99),
+                                              'value_qm30_temp': randint(0,99), 'qm30_remaining': 999,
+                                              'value_b22_status': randint(0,1), 'value_b22_peca': randint(0,99),
+                                              's15cct_value': randint(0,99),
+                                              's24ASD_humidity' : randint(0,99), 's24ASD_temperature' : randint(0,99),
+                                              's24ASD_dewpoint' : randint(0,99),
+                                              'dxm': 'DXM está offline :('}, namespace='/')
+
+                verificar_alertas("cnc", {
+                    "qm30_v_mm_x": randint(0,99),
+                    "qm30_hf_a_x": randint(0,99),
+                    "qm30_v_mm_y": randint(0,99),
+                    "qm30_hf_a_y": randint(0,99),
+                    "qm30_v_mm_z": randint(0,99),
+                    "qm30_hf_a_z": randint(0,99),
+                    "value_qm30_temp": randint(0,99),
+                    "s15cct_value": randint(0,99)
+                })
+
+                verificar_alertas("estufa", {
+                    "value_temp": randint(0,99),
+                    "value_humid": randint(0,99),
+                    "s24ASD_temperature": randint(0,99),
+                    "s24ASD_humidity": randint(0,99),
+                    "s24ASD_dewpoint": randint(0,99)
+                })
+
+                verificar_alertas("tanque", {
+                    "value_q4x": randint(0,99)
+                })
 
 def verificar_alertas(origem, dados_dict):
 
@@ -354,24 +387,6 @@ def listar_alertas(origem):
         for a in alertas
     ])
 
-
-    alertas = Alert.query.order_by(
-        Alert.timestamp.desc()
-    ).limit(100).all()
-
-    return jsonify([
-        {
-            "id": a.id,
-            "timestamp": a.timestamp.isoformat(),
-            "parametro": a.parametro,
-            "valor": a.valor,
-            "limite_min": a.limite_min,
-            "limite_max": a.limite_max,
-            "lido": a.lido
-        }
-        for a in alertas
-    ])
-
 @app.route('/api/alerta/<int:id>/lido', methods=['POST'])
 def marcar_lido(id):
 
@@ -410,6 +425,129 @@ def marcar_todos_lido(origem):
     return jsonify({"status": "todos_lidos"})
 
 
+@app.route("/api/limites", methods=["POST"])
+def atualizar_limites():
+    data = request.json
+
+    setor = data.get("setor")
+    variavel = data.get("variavel")
+    minimo = data.get("min")
+    maximo = data.get("max")
+
+    if setor in LIMITES and variavel in LIMITES[setor]:
+        LIMITES[setor][variavel]["min"] = minimo
+        LIMITES[setor][variavel]["max"] = maximo
+        return jsonify({"status": "ok"})
+
+    return jsonify({"status": "erro"}), 400
+
+@app.route("/api/limites/<setor>/<variavel>")
+def get_limites(setor, variavel):
+    if setor in LIMITES and variavel in LIMITES[setor]:
+        return jsonify(LIMITES[setor][variavel])
+    return jsonify({"erro": "não encontrado"}), 404
+
+@app.route("/api/status_maquinas")
+def status_maquinas():
+
+    status = {
+        "cnc": "normal",
+        "estufa": "normal",
+        "tanque": "normal"
+    }
+
+    maquinas = ["cnc", "estufa", "tanque"]
+
+    for maquina in maquinas:
+        alerta_existente = Alert.query.filter_by(
+            origem=maquina,
+            lido=False
+        ).first()
+
+        if alerta_existente:
+            status[maquina] = "alerta"
+
+    return jsonify(status)
+
+def monitorar_treinamento_qm30():
+
+    global treinamento_qm30_ativo
+    global qm30_remain_treinamento
+
+    while True:
+        with modbus_lock:
+            if client.open():
+                rr = client.read_holding_registers(506, 1)
+                ready = client.read_holding_registers(524, 1)
+                print(ready[0])
+
+            if rr:
+                qm30_remain_treinamento = rr[0]
+
+                socketio.emit("qm30_training_status", {
+                    "remain": qm30_remain_treinamento
+                })
+
+                if ready[0] == 4:
+                    break
+
+        time.sleep(1)
+
+    with modbus_lock:
+        if client.open():
+            novos_limites = client.read_holding_registers(509, 14)
+
+        if novos_limites:
+            LIMITES["cnc"]["qm30_v_mm_x"]["min"] = novos_limites[0]
+            LIMITES["cnc"]["qm30_v_mm_x"]["max"] = novos_limites[6]
+
+            LIMITES["cnc"]["qm30_v_mm_y"]["min"] = novos_limites[1]
+            LIMITES["cnc"]["qm30_v_mm_y"]["max"] = novos_limites[7]
+
+            LIMITES["cnc"]["qm30_v_mm_z"]["min"] = novos_limites[2]
+            LIMITES["cnc"]["qm30_v_mm_z"]["max"] = novos_limites[8]
+
+            LIMITES["cnc"]["qm30_hf_a_x"]["min"] = novos_limites[3]
+            LIMITES["cnc"]["qm30_hf_a_x"]["max"] = novos_limites[9]
+
+            LIMITES["cnc"]["qm30_hf_a_y"]["min"] = novos_limites[4]
+            LIMITES["cnc"]["qm30_hf_a_y"]["max"] = novos_limites[10]
+
+            LIMITES["cnc"]["qm30_hf_a_z"]["min"] = novos_limites[5]
+            LIMITES["cnc"]["qm30_hf_a_z"]["max"] = novos_limites[11]
+
+            LIMITES["cnc"]["value_qm30_temp"]["min"] = novos_limites[12]
+            LIMITES["cnc"]["value_qm30_temp"]["max"] = novos_limites[13]
+
+    treinamento_qm30_ativo = False
+
+    socketio.emit("qm30_training_status", {
+        "remain": 0,
+        "finalizado": True
+    })
+
+@app.route("/api/executar_acao_cnc", methods=["POST"])
+def executar_treinamento_qm30():
+
+    global treinamento_qm30_ativo
+
+    if treinamento_qm30_ativo:
+        return jsonify({"status": "treinamento_em_execucao"})
+
+    treinamento_qm30_ativo = True
+
+    with modbus_lock:
+        if client.open():
+            client.write_single_register(507, 1)
+            time.sleep(1)
+            client.write_single_register(507, 0)
+            time.sleep(2)
+
+    thread = threading.Thread(target=monitorar_treinamento_qm30)
+    thread.daemon = True
+    thread.start()
+
+    return jsonify({"status": "treinamento_iniciado"})
 # Rota para ‘download’ dos dados em formato Excel
 @app.route('/download', methods=['POST'])
 def download():

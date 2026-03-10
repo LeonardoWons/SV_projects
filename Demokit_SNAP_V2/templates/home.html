@@ -17,6 +17,29 @@
         </div>
     </div>
 
+    <div class="painel-home">
+
+        <!-- CNC -->
+        <div class="maquina" id="cncBox">
+            <img src="{{ url_for('static', filename='images/k100_verde.png') }}" class="img-maquina cnc-img ativo" data-status="normal">
+            <img src="{{ url_for('static', filename='images/k100_verm.png') }}" class="img-maquina cnc-img" data-status="alerta">
+        </div>
+
+        <!-- Estufa -->
+        <div class="maquina" id="estufaBox">
+            <img src="{{ url_for('static', filename='images/k100_verde.png') }}" class="img-maquina estufa-img ativo" data-status="normal">
+            <img src="{{ url_for('static', filename='images/k100_verm.png') }}" class="img-maquina estufa-img" data-status="alerta">
+        </div>
+
+        <!-- Tanque -->
+        <div class="maquina" id="tanqueBox">
+            <img src="{{ url_for('static', filename='images/k100_verde.png') }}" class="img-maquina tanque-img ativo" data-status="normal">
+            <img src="{{ url_for('static', filename='images/k100_verm.png') }}" class="img-maquina tanque-img" data-status="alerta">
+        </div>
+
+    </div>
+
+
     <button class="button_p" id="botao-principal" onclick="mostrarPainel()">
         Abrir Painel
     </button>
@@ -27,7 +50,7 @@
                 <button class="button_p" id="cnc" type="submit" >CNC machine</button>
             </form>
 
-            <a href="/alertas/cnc"><button class="button_p" id="cnc_alert">Alarmes(CNC)</button></a>
+            <a href="/alertas/cnc"><button class="button_p" id="cnc_alert">Alarmes</button></a>
 
         </div>
 
@@ -35,18 +58,31 @@
             <form action="{{url_for('estufa')}}">
                 <button class="button_p" id="estufa" type="submit">Estufa</button>
             </form>
-            <a href="/alertas/estufa"><button class="button_p" id="estufa_alert">Alarmes(Estufa)</button></a>
+            <a href="/alertas/estufa"><button class="button_p" id="estufa_alert">Alarmes</button></a>
         </div>
 
         <div class="coluna">
             <form action="{{url_for('agua')}}">
-                <button class="button_p" id="water" type="submit">Tank de agua</button>
+                <button class="button_p" id="water" type="submit">Tanque de agua</button>
             </form>
-            <a href="/alertas/tanque"><button class="button_p" id="agua_alert">Alarmes(Tanque)</button></a>
+            <a href="/alertas/tanque"><button class="button_p" id="agua_alert">Alarmes</button></a>
         </div>
     </div>
 
     <script>
+
+        function atualizarStatus(maquina, status) {
+
+            const imagens = document.querySelectorAll(`#${maquina}Box .img-maquina`);
+
+            imagens.forEach(img => {
+                img.classList.remove("ativo");
+                if (img.dataset.status === status) {
+                    img.classList.add("ativo");
+                }
+            });
+        }
+
         function mostrarPainel() {
             const painel = document.getElementById("painel");
             const botao = document.getElementById("botao-principal");
@@ -73,6 +109,22 @@
                  }
             });
         });
+
+        function verificarStatus() {
+
+            fetch("/api/status_maquinas")
+                .then(res => res.json())
+                .then(data => {
+
+                    atualizarStatus("cnc", data.cnc);
+                    atualizarStatus("estufa", data.estufa);
+                    atualizarStatus("tanque", data.tanque);
+
+                });
+        }
+
+        setInterval(verificarStatus, 5000);
+        verificarStatus();
 
     </script>
 

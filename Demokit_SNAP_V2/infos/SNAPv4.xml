@@ -2,7 +2,7 @@
 <!-- Created with Liquid XML Objects - Registered to 'Sensonix ' - https://www.liquid-technologies.com/xml-objects -->
 <configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <file_info>
-    <info device="DXMR90x" filename="SNAPv4.xml" guid="9f33d262-6616-4d22-939b-5d84386088e0" os="Win32NT" osversion="Microsoft Windows NT 6.1.7601 Service Pack 1" software="DXMConfigurationSoftware v4" solution="None" timestamp="15/02/2026 22:26:11" version="4.19.8.0" />
+    <info device="DXMR90x" filename="SNAPv4.xml" guid="73e770b3-7593-4fa6-b4a2-9158f4643100" os="Win32NT" osversion="Microsoft Windows NT 6.1.7601 Service Pack 1" software="DXMConfigurationSoftware v4" solution="None" timestamp="09/03/2026 18:00:01" version="4.19.8.0" />
     <notes>Snap Signal Demo V2</notes>
   </file_info>
   <local_regs>
@@ -57,6 +57,9 @@
     <reg name="QMVT3_Z_Vel" num="504" />
     <reg name="QMVT3_Z_Acce" num="505" />
     <reg name="QMVT3_Temp" num="506" />
+    <reg name="QM30VT3_Sample_remaining" num="507" />
+    <reg name="QM30VT3_start_training_write" num="508" />
+    <reg name="QM30VT3_start_training_send" num="509" />
     <reg name="B22_activePin4" num="600" />
     <reg name="B22_totalPin2" num="601" />
     <reg name="reset b22" num="603" />
@@ -67,6 +70,7 @@
   </local_regs>
   <cascade>
     <rule destreg="377" name="COPY_TEMP" sourcereg="156" thru="377" />
+    <rule destreg="509" name="New copy rule" sourcereg="508" thru="509" />
   </cascade>
   <constant>
     <rule constant="10000" destreg="111" />
@@ -129,6 +133,8 @@
     <rule count="2" default="0" localreg="502" mask="0" maxfail="0" name="QMVT3_Y_Vel_Acce" offset="0" poll="0.5" port="2" remfmt="int" remreg="39" remtype="hold_reg" scale="0" swapped="0" unit="3" />
     <rule count="2" default="0" localreg="504" mask="0" maxfail="0" name="QMVT3_Z_Vel_Acce" offset="0" poll="0.5" port="2" remfmt="int" remreg="41" remtype="hold_reg" scale="0" swapped="0" unit="3" />
     <rule count="1" default="0" localreg="506" mask="0" maxfail="0" name="QMVT3_temp" offset="0" poll="0.5" port="2" remfmt="int" remreg="43" remtype="hold_reg" scale="0" swapped="0" unit="3" />
+    <rule count="1" default="0" localreg="507" mask="0" maxfail="0" name="QMVT3_samples_remaining" offset="0" poll="1" port="2" remfmt="int" remreg="6003" remtype="hold_reg" scale="0" swapped="0" unit="3" />
+    <rule count="14" default="0" localreg="510" mask="0" maxfail="0" name="QMVT3_warning_alarm_values" offset="0" poll="1" port="2" remfmt="int" remreg="6024" remtype="hold_reg" scale="0" swapped="0" unit="3" />
     <rule count="3" default="0" localreg="101" mask="0" maxfail="0" name="S15STH_Humidity-TempC" offset="0" poll="0.5" port="1" remfmt="int" remreg="1" remtype="hold_reg" scale="0" swapped="0" unit="4" />
     <rule count="1" default="0" localreg="600" mask="0" maxfail="0" name="B22_ActivePin4" offset="0" poll="0.5" port="1" remfmt="int" remreg="1" remtype="hold_reg" scale="0" swapped="0" unit="5" />
     <rule count="1" default="0" localreg="601" mask="0" maxfail="0" name="B22_TotalPin2" offset="0" poll="0.5" port="1" remfmt="int" remreg="12" remtype="hold_reg" scale="0" swapped="0" unit="5" />
@@ -142,6 +148,7 @@
     <rule count="14" delta="0" fill="0" localreg="161" mask="0" maxquiet="0" minquiet="0" name="K50_Light_P1" offset="0" port="4" remfmt="int" remreg="3061" remtype="hold_reg" scale="0" swapped="0" unit="2" />
     <rule count="2" delta="0" fill="0" localreg="403" mask="0" maxquiet="0" minquiet="0" name="K50_DOT" offset="0" port="4" remfmt="int" remreg="6207" remtype="hold_reg" scale="0" swapped="0" unit="2" />
     <rule count="1" delta="0" fill="0" localreg="603" mask="0" maxquiet="0" minquiet="0" name="Reseta B22" offset="0" port="1" remfmt="int" remreg="605" remtype="hold_reg" scale="0" swapped="0" unit="1" />
+    <rule count="1" delta="0" fill="0" localreg="509" mask="0" maxquiet="0" minquiet="0" name="QM30VT3_start_training" offset="0" port="2" remfmt="int" remreg="6001" remtype="hold_reg" scale="0" swapped="0" unit="3" />
   </rtu_write>
   <modbus_tcp>
     <server enabled="1" inact="600000" />

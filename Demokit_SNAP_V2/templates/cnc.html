@@ -92,6 +92,25 @@
 
             <!-- COLUNA 2 -->
             <div id="grafico-container">
+                <div>
+                    <label>Training Remain:</label>
+                    <span id="qm30Remain">--</span>
+                </div>
+                <div class="limites-container">
+
+                    <div class="limite-item">
+                        <label>Cuidado</label>
+                        <span id="valorCuidado"></span>
+                    </div>
+
+                    <div class="limite-item">
+                        <label>Crítico</label>
+                        <span id="valorCritico"></span>
+                    </div>
+
+                    <button onclick="iniciarTreinamento()">Treinar QM30</button>
+
+                </div>
                 <div id="grafico"></div>
             </div>
 

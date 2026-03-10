@@ -3,9 +3,20 @@ document.addEventListener("DOMContentLoaded", () => {
                 const chart = echarts.init(document.getElementById('grafico'));
 
                 let variavelAtual = "value_temp";
+                let historicoCompleto = [];
+                let limiteMin = null;
+                let limiteMax = null;
 
-                let historicoCompleto = [];   // guarda todos os dados
-                let dadosGrafico = [];
+                carregarLimites("estufa", variavelAtual);
+
+                const campos = [
+                        "value_temp",
+                        "value_humid",
+                        "s24ASD_temperature",
+                        "s24ASD_humidity",
+                        "s24ASD_dewpoint"
+                ];
+
 
                 const nomes = {
                     value_temp: "Temperatura Interna",
@@ -25,18 +36,97 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 chart.setOption({
                     tooltip: { trigger: 'axis' },
-                    xAxis: { type: 'time' },
-                    yAxis: { type: 'value' },
+
                     dataZoom: [
                         { type: 'inside' },
                         { type: 'slider' }
                     ],
+
+                    xAxis: { type: 'time' },
+                    yAxis: { type: 'value' },
+
                     series: [{
                         name: nomes[variavelAtual],
                         type: 'line',
                         smooth: true,
-                        data: []
+                        data: [],
+                        markLine: {
+                            silent: true,
+                            data: []
+                        }
                     }]
+                });
+
+                function carregarLimites(setor, variavel) {
+
+                    fetch(`/api/limites/${setor}/${variavel}`)
+                        .then(res => res.json())
+                        .then(data => {
+
+                            limiteMin = data.min;
+                            limiteMax = data.max;
+
+                            // Atualiza inputs
+                            document.getElementById("limiteMin").value = limiteMin ?? "";
+                            document.getElementById("limiteMax").value = limiteMax ?? "";
+
+                            atualizarLimitesNoGrafico();
+                        });
+                }
+
+
+                function atualizarLimitesNoGrafico() {
+
+                    let linhas = [];
+
+                    if (limiteMin !== null) {
+                        linhas.push({
+                            yAxis: limiteMin,
+                            lineStyle: { color: '#2196F3', width: 2 },
+                            label: { formatter: 'Min: ' + limiteMin }
+                        });
+                    }
+
+                    if (limiteMax !== null) {
+                        linhas.push({
+                            yAxis: limiteMax,
+                            lineStyle: { color: '#f44336', width: 2 },
+                            label: { formatter: 'Max: ' + limiteMax }
+                        });
+                    }
+
+                    chart.setOption({
+                        series: [{
+                            markLine: {
+                                silent: true,
+                                data: linhas
+                            }
+                        }]
+                    }, false);
+                }
+
+                document.getElementById("aplicarLimites").addEventListener("click", function () {
+
+                    const minInput = document.getElementById("limiteMin").value;
+                    const maxInput = document.getElementById("limiteMax").value;
+
+                    limiteMin = minInput !== "" ? parseFloat(minInput) : null;
+                    limiteMax = maxInput !== "" ? parseFloat(maxInput) : null;
+
+                    atualizarLimitesNoGrafico();
+
+                    fetch("/api/limites", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({
+                                setor: "estufa",          // cnc / estufa / tanque
+                            variavel: variavelAtual,    // ex: value_temp
+                            min: limiteMin,
+                            max: limiteMax
+                        })
+                    });
                 });
 
                 // 🔹 Carregar histórico inicial
@@ -83,18 +173,15 @@ document.addEventListener("DOMContentLoaded", () => {
                 // 🔄 Troca variável
                 document.getElementById("variavelSelect").addEventListener("change", function() {
                     variavelAtual = this.value;
-                    reconstruirGrafico();  // NÃO limpa histórico
+                    // limpa dados se necessário
+                    chart.setOption({
+                        series: [{ data: [] }]
+                    });
+                    reconstruirGrafico();
+                    carregarLimites("estufa", variavelAtual);
                 });
 
                 function atualizarCaixas(data) {
-
-                    const campos = [
-                        "value_temp",
-                        "value_humid",
-                        "s24ASD_temperature",
-                        "s24ASD_humidity",
-                        "s24ASD_dewpoint"
-                    ];
 
                     for (let i = 0; i < campos.length; i++) {
 

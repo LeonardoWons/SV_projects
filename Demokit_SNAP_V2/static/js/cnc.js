@@ -4,6 +4,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     let variavelAtual = "qm30_v_mm_x";
     let historicoCompleto = [];
+    let limiteCuidado = null;
+    let limiteCritico = null;
 
     const campos = [
         "qm30_v_mm_x",
@@ -17,7 +19,6 @@ document.addEventListener("DOMContentLoaded", () => {
         "value_b22_peca",
         "s15cct_value"
     ];
-
     const nomes = {
         qm30_v_mm_x: "Vibração X",
         qm30_hf_a_x: "Alta Frequência X",
@@ -33,19 +34,88 @@ document.addEventListener("DOMContentLoaded", () => {
 
     chart.setOption({
         tooltip: { trigger: 'axis' },
-        xAxis: { type: 'time' },
-        yAxis: { type: 'value' },
+
         dataZoom: [
             { type: 'inside' },
             { type: 'slider' }
         ],
+
+        xAxis: { type: 'time' },
+        yAxis: { type: 'value' },
+
+        visualMap: {
+            show: false,
+            dimension: 1,
+            pieces: []   // começa vazio
+        },
+
         series: [{
             name: nomes[variavelAtual],
             type: 'line',
             smooth: true,
-            data: []
+            data: [],
+            markLine: {
+                silent: true,
+                data: []
+            }
         }]
     });
+
+    carregarLimitesCNC(variavelAtual);
+
+    function carregarLimitesCNC(variavel) {
+
+        fetch(`/api/limites/cnc/${variavel}`)
+            .then(res => res.json())
+            .then(data => {
+
+                limiteCuidado = data.min;
+                limiteCritico = data.max;
+
+                document.getElementById("valorCuidado").innerText = limiteCuidado;
+                document.getElementById("valorCritico").innerText = limiteCritico;
+
+                atualizarLinhasCNC();
+            });
+    }
+
+    function atualizarLinhasCNC() {
+
+        if (limiteCuidado === null || limiteCritico === null) return;
+
+        chart.setOption({
+            series: [{
+                markLine: {
+                    silent: true,
+                    data: [
+                        {
+                            yAxis: limiteCuidado,
+                            lineStyle: { color: '#ff9800', width: 2 },
+                            label: { formatter: 'Cuidado: ' + limiteCuidado }
+                        },
+                        {
+                            yAxis: limiteCritico,
+                            lineStyle: { color: '#f44336', width: 2 },
+                            label: { formatter: 'Crítico: ' + limiteCritico }
+                        }
+                    ]
+                }
+            }],
+            visualMap: {
+                pieces: [
+                    {
+                        gt: limiteCritico,
+                        color: '#f44336'
+                    },
+                    {
+                        gt: limiteCuidado,
+                        lte: limiteCritico,
+                        color: '#ff9800'
+                    }
+                ]
+            }
+        }, false);
+    }
 
     // 🔹 Carrega histórico inicial
     function carregarHistoricoInicial() {
@@ -91,7 +161,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
     document.getElementById("variavelSelect").addEventListener("change", function() {
         variavelAtual = this.value;
-        reconstruirGrafico();
+
+        chart.setOption({
+            series: [{ data: [] }]
+        });
+
+        carregarLimitesCNC(variavelAtual);
+
     });
 
     function atualizarCaixas(data) {
@@ -109,6 +185,49 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
+    var socket = io();
+
+    socket.on("qm30_training_status", function(data){
+
+        document.getElementById("qm30Remain").innerText = data.remain;
+
+        if(data.finalizado){
+            alert("Treinamento QM30 finalizado");
+        }
+
+    });
+
     carregarHistoricoInicial();
 
+    document.querySelectorAll(".acao-btn").forEach(btn => {
+
+        btn.addEventListener("click", function() {
+
+            const indice = this.dataset.indice;
+            const variavel = campos[indice];
+
+            fetch("/api/executar_acao_cnc", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    variavel: variavel
+                })
+            });
+
+        });
+
+    });
+
 });
+
+function iniciarTreinamento(){
+    fetch("/api/executar_acao_cnc", {
+        method: "POST"
+    })
+    .then(r => r.json())
+    .then(data => {
+        console.log(data);
+    });
+}
